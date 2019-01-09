@@ -482,6 +482,11 @@ static ssize_t sde_rot_evtlog_dump_read(struct file *file, char __user *buff,
 	if (__sde_rot_evtlog_dump_calc_range()) {
 		len = sde_rot_evtlog_dump_entry(evtlog_buf,
 				SDE_ROT_EVTLOG_BUF_MAX);
+		if (len < 0 || len > count) {
+			pr_err("len is more than the user buffer size\n");
+			return 0;
+		}
+
 		if (copy_to_user(buff, evtlog_buf, len))
 			return -EFAULT;
 		*ppos += len;
