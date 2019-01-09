@@ -2311,7 +2311,11 @@ EXPORT_SYMBOL_GPL(clk_set_flags);
 
 static struct dentry *rootdir;
 static int inited = 0;
+#ifdef CONFIG_PRINT_RPM_CLK_STATUS
+static u32 debug_suspend = 1;
+#else
 static u32 debug_suspend;
+#endif
 static DEFINE_MUTEX(clk_debug_lock);
 static HLIST_HEAD(clk_debug_list);
 
@@ -2995,7 +2999,11 @@ EXPORT_SYMBOL_GPL(clk_debugfs_add_file);
  */
 void clock_debug_print_enabled(void)
 {
+#ifdef CONFIG_PRINT_RPM_CLK_STATUS
+	if (unlikely(!debug_suspend))
+#else
 	if (likely(!debug_suspend))
+#endif
 		return;
 
 	clock_debug_print_enabled_debug_suspend(NULL);
